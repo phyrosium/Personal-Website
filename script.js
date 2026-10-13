@@ -4,6 +4,7 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+  initCursorCircleTracker();
   initMobileNavigation();
   initScrollSpy();
   initSkillBadges();
@@ -12,6 +13,69 @@ document.addEventListener('DOMContentLoaded', () => {
   initBackToTop();
   updateCurrentYear();
 });
+
+/* ==========================================================================
+   0. Interactive Cursor-Following Circular Background Pattern
+   ========================================================================== */
+function initCursorCircleTracker() {
+  const tracker = document.getElementById('cursorCircleTracker');
+  if (!tracker) return;
+
+  const hasFinePointer = window.matchMedia('(pointer: fine)').matches;
+  if (!hasFinePointer) {
+    tracker.style.display = 'none';
+    return;
+  }
+
+  let mouseX = window.innerWidth / 2;
+  let mouseY = window.innerHeight / 2;
+  let currentX = mouseX;
+  let currentY = mouseY;
+  let isVisible = false;
+  let idleTimeout;
+
+  // Initialize in center
+  tracker.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
+
+  const updatePosition = () => {
+    // Smooth lerp (linear interpolation) for fluid motion
+    const ease = 0.16;
+    currentX += (mouseX - currentX) * ease;
+    currentY += (mouseY - currentY) * ease;
+
+    tracker.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
+    requestAnimationFrame(updatePosition);
+  };
+
+  requestAnimationFrame(updatePosition);
+
+  window.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+
+    if (!isVisible) {
+      isVisible = true;
+      tracker.classList.add('visible');
+    }
+
+    tracker.classList.add('active');
+    clearTimeout(idleTimeout);
+    idleTimeout = setTimeout(() => {
+      tracker.classList.remove('active');
+    }, 120);
+  }, { passive: true });
+
+  document.addEventListener('mouseleave', () => {
+    isVisible = false;
+    tracker.classList.remove('visible');
+    tracker.classList.remove('active');
+  });
+
+  document.addEventListener('mouseenter', () => {
+    isVisible = true;
+    tracker.classList.add('visible');
+  });
+}
 
 /* ==========================================================================
    1. Mobile Navigation Drawer
