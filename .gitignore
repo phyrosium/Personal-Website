@@ -1,0 +1,23 @@
+# Secrets & Environment variables
+.env
+.env*
+!.env.example
+
+# Dependencies
+node_modules/
+vendor/
+
+# Other local projects & sub-repositories
+jobsearcher/
+Model-Response-Scorer/
+
+# OS / System
+.DS_Store
+Thumbs.db
+*.lnk
+desktop.ini
+
+# Build & Logs
+dist/
+build/
+*.log
